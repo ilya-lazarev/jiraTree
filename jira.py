@@ -15,9 +15,10 @@ last edited: January 2015
 import sys
 import pprint
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, QWidget, QLCDNumber, \
-	QSlider, QVBoxLayout, QApplication, QAction, QLabel)
+	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
+from PyQt5.QtQuickWidgets import (QQuickWidget)
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import (QSettings, QUrl)
 
 settingsName = "mainWindow/state"
 
@@ -28,15 +29,23 @@ class JiraMain(QMainWindow):
 		
 		self.settings = QSettings("Harman", "JiraTree");
 		self.mainWindowState = self.settings.value(settingsName)
-		pprint.pprint(self.mainWindowState)
 		self.initUI()
 
 	def onClose(self):
 		state = self.saveGeometry()
-		pprint.pprint(state)
 		self.settings.setValue(settingsName, state)
 		self.close()
 		
+	def loadMainView(self):
+		view = QQuickWidget();
+		view.setSource(QUrl.fromLocalFile("main.qml"));
+#		view->show();
+		self.setCentralWidget(view)
+		return view
+		
+	def goHandler(self):
+		print("GO!")
+
 	def initUI(self):				
 		
 		self.statusBar()
@@ -46,34 +55,31 @@ class JiraMain(QMainWindow):
 		exitAction.setStatusTip('Exit application')
 		exitAction.triggered.connect(self.onClose)
 
+		processUrlAction = QAction(QIcon('img/go.svg'), 'Go', self)
+		processUrlAction.setShortcut('Ctrl+G')
+		processUrlAction.setStatusTip('Analyzes issue')
+		processUrlAction.triggered.connect(self.goHandler)
 
 		menubar = self.menuBar()
 		fileMenu = menubar.addMenu('&File')
+		fileMenu.addAction(processUrlAction)
+		fileMenu.addSeparator()
 		fileMenu.addAction(exitAction)
 
 		toolbar = self.addToolBar('Exit')
 		toolbar.setObjectName('ToolBar')
 		toolbar.addAction(exitAction)
+		toolbar.addAction(processUrlAction)
 
-		self.urlEdit = QLineEdit(self)
-		hbox = QHBoxLayout()
-		hbox.addWidget(QLabel('URL',self))
-		hbox.addWidget(self.urlEdit)
-
-		vbox = QVBoxLayout()
-		vbox.addLayout(hbox)
-
-#		self.setLayout(vbox)
-#		self.setCentralWidget(vbox)
+		mView = self.loadMainView()
+		
+		b = mView.findChild(QPushButton, 'bGo', QtFindChildOptions.FindChildrenRecursively)
+		pprint.pprint(b)
+		b.onClick.connect(self.goHandler)
 		self.setWindowTitle('Main window')
-		if self.mainWindowState != None:
-			if self.mainWindowState.size() > 0:
-				print("Loaded settings: ")
-				self.restoreGeometry(self.mainWindowState);
-			else:
-				print("Settings is 0")
+		if self.mainWindowState != None and self.mainWindowState.size() > 0:
+			self.restoreGeometry(self.mainWindowState);
 		else:
-			print("No settings")
 			self.setGeometry(300, 300, 800, 600)
 		self.show()
 		
