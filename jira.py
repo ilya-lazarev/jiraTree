@@ -18,6 +18,7 @@ from PyQt5 import (QtQml)
 from PyQt5.QtCore import (QSettings, QUrl, Qt, QRegExp)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, QWidget, QLCDNumber, \
 	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
+
 from PyQt5.QtQml import (QQmlEngine, QQmlContext)
 from PyQt5.QtQuickWidgets import (QQuickWidget)
 from PyQt5.QtGui import QIcon
@@ -48,9 +49,11 @@ class JiraMain(QMainWindow):
 		print("GO!")
 
 	def createContext(self):
-		rootContext = QQmlEngine().rootContext()
-		self.context = QQmlContext(rootContext)
-		self.context.setContextProperty("mainObject", self);
+		rootContext = QtQml.QQmlEngine().rootContext()
+		pprint.pprint(rootContext.contextObject())
+		self.qmlContext = QQmlContext(rootContext)
+		pprint.pprint(self.qmlContext.isValid())
+		self.qmlContext.setContextProperty("mainObject", self)
 		
 	def initUI(self):				
 		
@@ -77,12 +80,12 @@ class JiraMain(QMainWindow):
 		toolbar.addAction(exitAction)
 		toolbar.addAction(processUrlAction)
 
-		self.createContext()
 		mView = self.loadMainView()
+		self.createContext()
 		
 		self.setWindowTitle('Main window')
 		if self.mainWindowState != None and self.mainWindowState.size() > 0:
-			self.restoreGeometry(self.mainWindowState);
+			self.restoreGeometry(self.mainWindowState)
 		else:
 			self.setGeometry(300, 300, 800, 600)
 		self.show()
