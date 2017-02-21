@@ -14,11 +14,13 @@ last edited: January 2015
 
 import sys
 import pprint
+from PyQt5 import (QtQml)
+from PyQt5.QtCore import (QSettings, QUrl, Qt, QRegExp)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, QWidget, QLCDNumber, \
 	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
+from PyQt5.QtQml import (QQmlEngine, QQmlContext)
 from PyQt5.QtQuickWidgets import (QQuickWidget)
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import (QSettings, QUrl)
 
 settingsName = "mainWindow/state"
 
@@ -26,7 +28,6 @@ class JiraMain(QMainWindow):
 	
 	def __init__(self):
 		super().__init__()
-		
 		self.settings = QSettings("Harman", "JiraTree");
 		self.mainWindowState = self.settings.value(settingsName)
 		self.initUI()
@@ -46,6 +47,11 @@ class JiraMain(QMainWindow):
 	def goHandler(self):
 		print("GO!")
 
+	def createContext(self):
+		rootContext = QQmlEngine().rootContext()
+		self.context = QQmlContext(rootContext)
+		self.context.setContextProperty("mainObject", self);
+		
 	def initUI(self):				
 		
 		self.statusBar()
@@ -71,11 +77,9 @@ class JiraMain(QMainWindow):
 		toolbar.addAction(exitAction)
 		toolbar.addAction(processUrlAction)
 
+		self.createContext()
 		mView = self.loadMainView()
 		
-		b = mView.findChild(QPushButton, 'bGo', QtFindChildOptions.FindChildrenRecursively)
-		pprint.pprint(b)
-		b.onClick.connect(self.goHandler)
 		self.setWindowTitle('Main window')
 		if self.mainWindowState != None and self.mainWindowState.size() > 0:
 			self.restoreGeometry(self.mainWindowState);

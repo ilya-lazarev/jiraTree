@@ -2,8 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import QtQuick.Extras 1.4
+import QtQuick.Controls 1.4
 import QtQuick.Controls 2.0
-import QtQuick.Controls.Universal 2.0
 
 Pane {
     id: mainItem
@@ -12,10 +12,10 @@ Pane {
     leftPadding: 6
     topPadding: 6
     spacing: 4
-    ColumnLayout {
-        id: columnLayout1
-        anchors.fill: parent
 
+    Column {
+        id: column1
+        anchors.fill: parent
 
         Row {
             id: row1
@@ -27,7 +27,6 @@ Pane {
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 20
-            anchors.top: parent.top
             anchors.topMargin: 0
 
             Text {
@@ -39,35 +38,47 @@ Pane {
                 font.pixelSize: 12
             }
 
-            TextEdit {
-                focus: true
+            TextField {
                 id: idInput
-                width: 300
-                height: 17
-                text: qsTr("PSADEV-596")
+                height: 24
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
+                placeholderText: qsTr("PSADEV-?")
             }
-
             Button {
                 id: bGo
                 objectName: 'bGo'
+                //                iconSource: uri('img/go.svg')
                 width: 64
-                height: 32
+                height: 24
                 text: qsTr("Go")
                 autoExclusive: false
                 highlighted: false
                 anchors.leftMargin: 20
                 anchors.verticalCenter: idInput.verticalCenter
             }
+
         }
-        Row {
-            id: row2
-            anchors.top: row1.bottom
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.topMargin: 0
+        SplitView {
+            id: splitView1
+            anchors.fill: parent
+
+            TreeView {
+                id: treeItem
+                Layout.minimumWidth: 400
+            }
+
+            TextArea {
+                text: qsTr("Example")
+                id: propsItem
+                color: "#7576c8"
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
         }
+    }
+
+    Connections {
+        target: bGo
+        onClicked: print("clicked")
     }
 }
