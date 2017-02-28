@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, Q
 	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
 
 from PyQt5.QtQml import (QQmlEngine, QQmlContext)
+from PyQt5.QtQuick import (QQuickView)
 from PyQt5.QtQuickWidgets import (QQuickWidget)
 from PyQt5.QtGui import QIcon
 
@@ -44,7 +45,7 @@ class JiraMain(QMainWindow):
 #		view->show();
 		self.setCentralWidget(view)
 		return view
-		
+
 	def goHandler(self):
 		print("GO!")
 
