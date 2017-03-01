@@ -56,44 +56,53 @@ Pane {
             //                        nameFilters: ["*.*"]
             //                    }
         }
-        RowLayout {
-            id: row1
+        GroupBox {
+            id: groupBox
+            width: 360
+            height: 300
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 12
-            //        anchors.right: parent.right
-            //        anchors.rightMargin: 0
-            //        anchors.left: parent.left
-            anchors.leftMargin: 20
-            //        anchors.topMargin: 0
-//            height: 24
+            title: qsTr("Issue")
 
-            Text {
-                id: idLabel
-                text: qsTr("Issue ID")
-                font.bold: true
+            RowLayout {
+                id: row1
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 12
+                //        anchors.right: parent.right
+                //        anchors.rightMargin: 0
+                //        anchors.left: parent.left
                 anchors.leftMargin: 20
-                //                    anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-            }
+                //        anchors.topMargin: 0
+                //            height: 24
 
-            TextField {
-                id: idInput
-                height: 24
-                //                    anchors.verticalCenter: parent.verticalCenter
-                placeholderText: qsTr("PSADEV-?")
-            }
-            Button {
-                id: bGo
-                objectName: 'bGo'
-                //                iconSource: uri('img/go.svg')
-                width: 64
-                height: 24
-                text: qsTr("Go")
-                autoExclusive: false
-                highlighted: false
-                anchors.leftMargin: 20
-                //                    anchors.verticalCenter: idInput.verticalCenter
+                Text {
+                    id: idLabel
+                    text: qsTr("Issue ID")
+                    font.bold: true
+                    anchors.leftMargin: 20
+                    //                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 12
+                }
+
+                TextField {
+                    id: idInput
+                    height: 24
+                    //                    anchors.verticalCenter: parent.verticalCenter
+                    placeholderText: qsTr("PSADEV-?")
+                }
+                Button {
+                    id: bGo
+                    objectName: 'bGo'
+                    //                iconSource: uri('img/go.svg')
+                    width: 64
+                    height: 24
+                    text: qsTr("Go")
+                    autoExclusive: false
+                    highlighted: false
+                    anchors.leftMargin: 20
+                    //                    anchors.verticalCenter: idInput.verticalCenter
+                }
+
             }
 
         }
@@ -102,7 +111,7 @@ Pane {
 
     Connections {
         target: bGo
-        onClicked: console.log("clicked")
+        onClicked: mainObject.goHandler()
     }
 }
 

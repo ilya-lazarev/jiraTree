@@ -19,7 +19,7 @@ from PyQt5.QtCore import (QSettings, QUrl, Qt, QRegExp)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, QWidget, QLCDNumber, \
 	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
 
-from PyQt5.QtQml import (QQmlEngine, QQmlContext)
+from PyQt5.QtQml import (QQmlEngine, QQmlContext,QQmlApplicationEngine)
 from PyQt5.QtQuick import (QQuickView)
 from PyQt5.QtQuickWidgets import (QQuickWidget)
 from PyQt5.QtGui import QIcon
@@ -44,7 +44,7 @@ class JiraMain(QMainWindow):
 
 	def createContext(self, view):
 		self.qmlContext = view.rootContext()
-		pprint.pprint(self.qmlContext)
+
 		self.qmlContext.setContextProperty("mainObject", self)
 		
 	def initUI(self):				
@@ -75,6 +75,8 @@ class JiraMain(QMainWindow):
 		mView = self.loadMainView()
 		self.createContext(mView)
 		
+		pprint.pprint(QQmlEngine().rootObjects())
+		
 		self.setWindowTitle('Main window')
 		if self.mainWindowState != None and self.mainWindowState.size() > 0:
 			self.restoreGeometry(self.mainWindowState)
@@ -88,7 +90,7 @@ class JiraMain(QMainWindow):
 		container.setFocusPolicy(Qt.TabFocus);
 		view.setSource(QUrl("main.qml"));	
 		
-		view = QQuickWidget(QUrl.fromLocalFile("main.qml"), self);
+		#view = QQuickWidget(QUrl.fromLocalFile("main.qml"), self);
 		self.setCentralWidget(container)
 		return view
 
