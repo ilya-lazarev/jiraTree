@@ -39,21 +39,12 @@ class JiraMain(QMainWindow):
 		self.settings.setValue(settingsName, state)
 		self.close()
 		
-	def loadMainView(self):
-		view = QQuickWidget();
-		view.setSource(QUrl.fromLocalFile("main.qml"));
-#		view->show();
-		self.setCentralWidget(view)
-		return view
-
 	def goHandler(self):
 		print("GO!")
 
-	def createContext(self):
-		rootContext = QtQml.QQmlEngine().rootContext()
-		pprint.pprint(rootContext.contextObject())
-		self.qmlContext = QQmlContext(rootContext)
-		pprint.pprint(self.qmlContext.isValid())
+	def createContext(self, view):
+		self.qmlContext = view.rootContext()
+		pprint.pprint(self.qmlContext)
 		self.qmlContext.setContextProperty("mainObject", self)
 		
 	def initUI(self):				
@@ -82,7 +73,7 @@ class JiraMain(QMainWindow):
 		toolbar.addAction(processUrlAction)
 
 		mView = self.loadMainView()
-		self.createContext()
+		self.createContext(mView)
 		
 		self.setWindowTitle('Main window')
 		if self.mainWindowState != None and self.mainWindowState.size() > 0:
@@ -91,6 +82,16 @@ class JiraMain(QMainWindow):
 			self.setGeometry(300, 300, 800, 600)
 		self.show()
 		
+	def loadMainView(self):
+		view = QQuickView();
+		container = QWidget.createWindowContainer(view, self);
+		container.setFocusPolicy(Qt.TabFocus);
+		view.setSource(QUrl("main.qml"));	
+		
+		view = QQuickWidget(QUrl.fromLocalFile("main.qml"), self);
+		self.setCentralWidget(container)
+		return view
+
 		
 if __name__ == '__main__':
 	
