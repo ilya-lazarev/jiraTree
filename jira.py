@@ -14,87 +14,99 @@ last edited: January 2015
 
 import sys
 import pprint
-from PyQt5 import (QtQml)
-from PyQt5.QtCore import (QSettings, QUrl, Qt, QRegExp)
+from objbrowser import browse
+from PyQt5 import (QtCore, QtQml)
+from PyQt5.QtCore import (QObject, QSettings, QUrl, Qt, QRegExp, pyqtSlot)
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QMainWindow, QLineEdit, QWidget, QLCDNumber, \
-	QSlider, QVBoxLayout, QApplication, QAction, QLabel,QPushButton)
+							 QSlider, QVBoxLayout, QApplication, QAction, QLabel, QPushButton, QMenuBar)
 
-from PyQt5.QtQml import (QQmlEngine, QQmlContext)
-from PyQt5.QtQuick import (QQuickView)
+from PyQt5.QtQml import (QQmlEngine, QQmlContext, QQmlApplicationEngine)
+from PyQt5.QtQuick import (QQuickView, QQuickItem)
 from PyQt5.QtQuickWidgets import (QQuickWidget)
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import (QIcon, QGuiApplication)
 
 settingsName = "mainWindow/state"
 
+
 class JiraMain(QMainWindow):
-	
 	def __init__(self):
 		super().__init__()
-		self.settings = QSettings("Harman", "JiraTree");
+		self.settings = QSettings("Harman", "JiraTree")
 		self.mainWindowState = self.settings.value(settingsName)
 		self.initUI()
 
+	@pyqtSlot()
 	def onClose(self):
-		state = self.saveGeometry()
+		print("Close")
+		state = self.mainWindow.saveGeometry()
 		self.settings.setValue(settingsName, state)
-		self.close()
-		
+		self.mainWindow.close()
+
+	@pyqtSlot()
 	def goHandler(self):
 		print("GO!")
 
-	def createContext(self, view):
-		self.qmlContext = view.rootContext()
-		pprint.pprint(self.qmlContext)
-		self.qmlContext.setContextProperty("mainObject", self)
+	@pyqtSlot()
+	def onAbout(self):
+		print("About")
 		
-	def initUI(self):				
+	@pyqtSlot()
+	def onConnect(self):
+		print("Connect")
 		
-		self.statusBar()
-		
-		exitAction = QAction(QIcon('img/exit.png'), 'Exit', self)
-		exitAction.setShortcut('Ctrl+Q')
-		exitAction.setStatusTip('Exit application')
-		exitAction.triggered.connect(self.onClose)
-
-		processUrlAction = QAction(QIcon('img/go.svg'), 'Go', self)
-		processUrlAction.setShortcut('Ctrl+G')
-		processUrlAction.setStatusTip('Analyzes issue')
-		processUrlAction.triggered.connect(self.goHandler)
-
-		menubar = self.menuBar()
-		fileMenu = menubar.addMenu('&File')
-		fileMenu.addAction(processUrlAction)
-		fileMenu.addSeparator()
-		fileMenu.addAction(exitAction)
-
-		toolbar = self.addToolBar('Exit')
-		toolbar.setObjectName('ToolBar')
-		toolbar.addAction(exitAction)
-		toolbar.addAction(processUrlAction)
-
-		mView = self.loadMainView()
-		self.createContext(mView)
-		
-		self.setWindowTitle('Main window')
-		if self.mainWindowState != None and self.mainWindowState.size() > 0:
-			self.restoreGeometry(self.mainWindowState)
-		else:
-			self.setGeometry(300, 300, 800, 600)
-		self.show()
+	@pyqtSlot(QQuickItem)
+	def setMenu(self, menuBar):
+		print("set menu")
+		pprint.pprint(menuBar)
+		self.setMenuBar(menuBar)
 		
 	def loadMainView(self):
-		view = QQuickView();
-		container = QWidget.createWindowContainer(view, self);
-		container.setFocusPolicy(Qt.TabFocus);
-		view.setSource(QUrl("main.qml"));	
-		
-		view = QQuickWidget(QUrl.fromLocalFile("main.qml"), self);
-		self.setCentralWidget(container)
-		return view
+		view = QQuickView()
+		view.rootContext().setContextProperty("base", self)
+		view.setSource(QUrl("main.qml"))
+		self.mainWindow = self
+		r = view.rootObject()
 
-		
+	def restoreState(self):
+		if self.mainWindowState != None and self.mainWindowState.size() > 0:
+			self.mainWindow.restoreGeometry(self.mainWindowState)
+		else:
+			self.mainWindow.setGeometry(300, 300, 800, 600)
+
+	def initUI(self):
+
+		self.loadMainView()
+		self.statusBar()
+		# exitAction = QAction(QIcon('img/exit.png'), 'Exit', self)
+		# exitAction.setShortcut('Ctrl+Q')
+		# exitAction.setStatusTip('Exit application')
+		# exitAction.triggered.connect(self.onClose)
+
+		# processUrlAction = QAction(QIcon('img/go.svg'), 'Go', self)
+		# processUrlAction.setShortcut('Ctrl+G')
+		# processUrlAction.setStatusTip('Analyzes issue')
+		# processUrlAction.triggered.connect(self.goHandler)
+
+		# menubar = self.menuBar() 
+		# fileMenu = menubar.addMenu('&File')
+		# fileMenu.addAction(processUrlAction)
+		# fileMenu.addSeparator()
+		# fileMenu.addAction(exitAction)
+
+		toolbar = self.addToolBar('Exit')
+		# toolbar.setObjectName('ToolBar')
+		# toolbar.addAction(exitAction)
+		# toolbar.addAction(processUrlAction)
+
+		self.restoreState()
+		self.show()
+
+
 if __name__ == '__main__':
-	
 	app = QApplication(sys.argv)
 	ex = JiraMain()
-	sys.exit(app.exec_())
+	print("Run")
+	app.exec()
+	print("Exit")
+	sys.exit()
