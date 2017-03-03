@@ -6,10 +6,14 @@ import QtQuick.Controls 2.0
 import QtQuick.Controls 1.4
 import Qt.labs.folderlistmodel 2.1
 
+import JiraTree 1.0
 
-Pane {
+ApplicationWindow {
     id: mainPane
-    anchors.fill: parent
+	visible: true
+	width: 800
+	height: 600
+
     Action {
         id: connectAction
         text: qsTr("&Connect")
@@ -47,22 +51,36 @@ Pane {
         onTriggered: base.onAbout()
         tooltip: qsTr("Shows About dialog")
     }
-    property MenuBar mainMenuBar: MenuBar {
-        Menu {
-            title: qsTr("&File")
-            MenuItem { action: quitAction }
-        }
-        Menu {
-            title: qsTr("&Edit")
-        }
-        Menu {
-            title: qsTr("&Jira")
-        }
-        Menu {
-            title: qsTr("&Help")
-        }
-    }
-
+	
+	menuBar: MenuBar {
+			Menu {
+				title: qsTr("&File")
+				MenuItem { action: quitAction }
+			}
+			Menu {
+				title: qsTr("&Edit")
+			}
+			Menu {
+				title: qsTr("&Jira")
+			}
+			Menu {
+				title: qsTr("&Help")
+			}
+		}
+		
+	statusBar: StatusBar {
+		RowLayout {
+            anchors.fill: parent
+			Label {
+				id: statusLabel
+				Text: "Label"
+			}
+		}
+	}
+	
+Pane {
+	anchors.fill: parent
+		
     ColumnLayout {
         id: column1
         anchors.fill: parent
@@ -128,10 +146,10 @@ Pane {
                 font.pixelSize: 12
             }
 
-            TextField {
+            TextEdit {
                 id: idInput
                 height: 24
-                placeholderText: qsTr("PSADEV-?")
+                text: "PSADEV-"
             }
             Button {
                 id: bGo
@@ -146,8 +164,9 @@ Pane {
         }
 
     }
-    Component.onCompleted: {
-        console.log(mainPane.mainMenuBar)
-        base.setMenu(mainPane.mainMenuBar)
-    }
+	}
+//    Component.onCompleted: {
+//        console.log(mainPane.mainMenuBar)
+//        MainWindow.menuBar = mainPane.mainMenuBar
+//    }
 }
