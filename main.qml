@@ -20,7 +20,7 @@ ApplicationWindow {
         shortcut: "Ctrl-N"
         iconName: "connect"
         iconSource: "img/connect.png"
-        onTriggered: base.onConnect()
+        onTriggered: mainWindow.onConnect()
         tooltip: qsTr("Connect to JIRA server")
     }
 
@@ -30,7 +30,7 @@ ApplicationWindow {
         shortcut: "Ctrl-Q"
         iconName: "exit"
         iconSource: "img/exit.png"
-        onTriggered: base.onClose()
+        onTriggered: mainWindow.onClose()
         tooltip: qsTr("Quits application")
     }
     Action {
@@ -39,7 +39,7 @@ ApplicationWindow {
         shortcut: "Ctrl-G"
         iconName: "go"
         iconSource: "img/go.svg"
-        onTriggered: base.goHandler()
+        onTriggered: mainWindow.goHandler()
         tooltip: qsTr("Analyze the issue")
     }
 
@@ -48,7 +48,7 @@ ApplicationWindow {
         text: qsTr("&About")
         iconName: "about"
         iconSource: "img/about.png"
-        onTriggered: base.onAbout()
+        onTriggered: mainWindow.onAbout()
         tooltip: qsTr("Shows About dialog")
     }
 	
@@ -73,7 +73,7 @@ ApplicationWindow {
             anchors.fill: parent
 			Label {
 				id: statusLabel
-				Text: "Label"
+				text: "Label"
 			}
 		}
 	}

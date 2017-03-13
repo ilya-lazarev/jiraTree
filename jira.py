@@ -113,11 +113,6 @@ class JiraMain(QMainWindow):
 		self.restoreState()
 		self.show()
 
-
-class JiraMainMenu(QObject):
-	def __init__(self, parent=None):
-		super().__init__(parent)
-	
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	qmlRegisterType(JiraMain, 'JiraTree', 1, 0, 'MainWindow')
@@ -127,6 +122,8 @@ if __name__ == '__main__':
 	component = QQmlComponent(engine)
 	component.loadUrl(QUrl.fromLocalFile('main.qml'))
 	jm = component.create()
+	[ print(e.toString()) for e in component.errors() ]
+	engine.rootContext().setContextProperty("mainWindow", jm)
 	if jm is None:
 		print( "JM is none")
 		print( { e.toString() for e in component.errors()})
